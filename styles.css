@@ -52,6 +52,101 @@
 }
 
 /* =============================================
+   LIGHT MODE OVERRIDES  (body.light)
+   Warm cream surfaces, same amber brand accents
+   ============================================= */
+
+body.light {
+    --amber-glow:          rgba(223, 157, 20, 0.12);
+    --amber-glow-strong:   rgba(223, 157, 20, 0.20);
+    --amber-border:        rgba(176, 122, 15, 0.30);
+    --amber-border-strong: rgba(176, 122, 15, 0.55);
+
+    --bg:            #FAF7F2;
+    --surface:       #FFFFFF;
+    --surface-raised:#F4F0E8;
+    --surface-high:  #ECE7DC;
+
+    --text:          #1A1208;
+    --text-secondary:#6B5C3E;
+    --text-muted:    #B8A888;
+
+    --border:          rgba(0, 0, 0, 0.07);
+    --border-moderate: rgba(0, 0, 0, 0.12);
+
+    --green-bg:     rgba(4, 120, 87, 0.07);
+    --green-border: rgba(4, 120, 87, 0.20);
+    --warn-bg:      rgba(180, 110, 0, 0.07);
+    --warn-border:  rgba(180, 110, 0, 0.22);
+    --red-bg:       rgba(185, 28, 28, 0.07);
+    --red-border:   rgba(185, 28, 28, 0.18);
+}
+
+/* Header ambient glow — lighter in light mode */
+body.light .header::before {
+    background: radial-gradient(ellipse at 50% 40%, rgba(223, 157, 20, 0.10) 0%, transparent 65%);
+}
+
+/* Spend bars stay vivid amber in light mode */
+body.light .spend-bar-bg {
+    background: rgba(0, 0, 0, 0.07);
+}
+
+/* Select arrow adapts to dark text */
+body.light select {
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236B5C3E' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+body.light select option {
+    background: #FFFFFF;
+    color: #1A1208;
+}
+
+/* Modal backdrop lighter */
+body.light .modal-backdrop {
+    background: rgba(26, 18, 8, 0.55);
+}
+
+body.light .loading-overlay {
+    background: rgba(26, 18, 8, 0.6);
+}
+
+/* =============================================
+   THEME TOGGLE BUTTON
+   ============================================= */
+
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 500;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border-moderate);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+}
+
+.theme-toggle:hover {
+    color: var(--amber);
+    border-color: var(--amber-border);
+    box-shadow: 0 0 0 3px var(--amber-glow);
+}
+
+/* Show moon in dark mode, sun in light mode */
+.icon-sun  { display: none; }
+.icon-moon { display: block; }
+
+body.light .icon-sun  { display: block; }
+body.light .icon-moon { display: none; }
+
+/* =============================================
    RESET & BASE
    ============================================= */
 

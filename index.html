@@ -202,6 +202,41 @@
                 </div>
             </section>
 
+            <!-- ── Error / Retry Section ── -->
+            <section id="error-section" class="error-section hidden">
+                <div class="error-card">
+                    <div class="error-icon-wrap">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="error-title" id="error-title">Analysis Unavailable</h3>
+                    <p class="error-message" id="error-message"></p>
+
+                    <div class="error-countdown hidden" id="error-countdown">
+                        <div class="countdown-display">
+                            <span class="countdown-time" id="countdown-time">5:00</span>
+                            <span class="countdown-label">retrying automatically</span>
+                        </div>
+                        <div class="countdown-track">
+                            <div class="countdown-fill" id="countdown-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="error-actions">
+                        <button class="btn btn-primary btn-full" id="error-manual-btn">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Enter Numbers Manually
+                        </button>
+                        <button class="btn btn-secondary btn-full" id="error-retry-btn">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Retry Analysis
+                        </button>
+                    </div>
+                    <p class="error-footer" id="error-footer"></p>
+                </div>
+            </section>
+
             <section id="verification-section" class="verification-section hidden">
                 <div class="verification-strip">
                     <div id="multi-step-indicator" class="multi-step-indicator"></div>

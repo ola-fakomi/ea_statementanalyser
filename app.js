@@ -184,7 +184,7 @@ async function handleFiles(files) {
             const result = await analyseStatementWithAI(rawFiles[i].text, rawFiles[i].type, rawFiles[i].cacheKey);
             analysed.push({ name: rawFiles[i].name, result, error: null });
         } catch (err) {
-            analysed.push({ name: rawFiles[i].name, result: null, error: err.message });
+            analysed.push({ name: rawFiles[i].name, result: null, error: err.message, errObj: err });
         }
     }
 
@@ -192,7 +192,8 @@ async function handleFiles(files) {
 
     const successful = analysed.filter(a => a.result !== null);
     if (successful.length === 0) {
-        alert('AI analysis failed for all files. Please try again.');
+        const lastErr = analysed.find(a => a.error)?.errObj || new Error('All files failed');
+        showAnalysisError(lastErr, () => handleFiles(files));
         return;
     }
 
@@ -206,7 +207,7 @@ async function handleFiles(files) {
 
     const failed = analysed.filter(a => a.result === null);
     if (failed.length > 0) {
-        alert(`${failed.length} file(s) failed to analyse and will be skipped: ${failed.map(f => f.name).join(', ')}`);
+        console.warn(`${failed.length} file(s) failed and were skipped: ${failed.map(f => f.name).join(', ')}`);
     }
 
     multiFileIndex = 0;
@@ -317,8 +318,7 @@ async function processWithAI(content, fileType, fileName, cacheKey) {
         }
     } catch (error) {
         hideLoading();
-        alert('AI analysis failed: ' + error.message + '\nPlease try manual entry.');
-        console.error(error);
+        showAnalysisError(error, () => processWithAI(content, fileType, fileName, cacheKey));
     }
 }
 
@@ -332,6 +332,117 @@ function hideLoading() {
     document.getElementById('loading-overlay').classList.add('hidden');
 }
 
+
+// ── Analysis Error Flow ──────────────────────────────────────────────
+
+const _errorCfg = {
+    credits: {
+        title: 'AI Analysis Paused',
+        message: 'The analysis service is temporarily out of credits. You can enter your numbers manually right now — the AI analyser will be restored once the account is topped up.',
+        retryDelay: null,
+        footer: 'Your uploaded file is intact and ready to re-analyse once the service is back.'
+    },
+    ratelimit: {
+        title: 'Service Is Busy',
+        message: 'Too many requests at once. The analyser will retry automatically in 60 seconds. You can also switch to manual entry in the meantime.',
+        retryDelay: 60,
+        footer: 'Your file is queued — no need to re-upload.'
+    },
+    server: {
+        title: 'Service Temporarily Unavailable',
+        message: 'The analysis service is experiencing a disruption. It will retry automatically in 5 minutes, or you can use manual entry now for immediate results.',
+        retryDelay: 300,
+        footer: 'Your file is intact and will be analysed automatically when the service recovers.'
+    },
+    network: {
+        title: 'Connection Failed',
+        message: 'Unable to reach the analysis service. Check your internet connection — a retry will run automatically in 30 seconds.',
+        retryDelay: 30,
+        footer: 'Your file is ready to go once connectivity is restored.'
+    },
+    unknown: {
+        title: 'Analysis Failed',
+        message: 'Something went wrong during analysis. You can retry now or switch to manual entry for immediate results.',
+        retryDelay: null,
+        footer: 'If the problem persists, manual entry will give you the full report.'
+    }
+};
+
+let _countdownInterval = null;
+
+function showAnalysisError(error, retryFn) {
+    // Clear any running countdown
+    if (_countdownInterval) { clearInterval(_countdownInterval); _countdownInterval = null; }
+
+    const type = error?.errType || 'unknown';
+    const cfg  = _errorCfg[type] || _errorCfg.unknown;
+
+    document.getElementById('error-title').textContent   = cfg.title;
+    document.getElementById('error-message').textContent = cfg.message;
+    document.getElementById('error-footer').textContent  = cfg.footer;
+
+    const countdownEl  = document.getElementById('error-countdown');
+    const timeEl       = document.getElementById('countdown-time');
+    const fillEl       = document.getElementById('countdown-fill');
+    const retryBtn     = document.getElementById('error-retry-btn');
+
+    if (cfg.retryDelay) {
+        countdownEl.classList.remove('hidden');
+        retryBtn.disabled = false;
+
+        let remaining = cfg.retryDelay;
+        const total   = cfg.retryDelay;
+
+        const tick = () => {
+            const mins = Math.floor(remaining / 60);
+            const secs = remaining % 60;
+            timeEl.textContent  = mins > 0 ? `${mins}:${String(secs).padStart(2,'0')}` : `${secs}s`;
+            fillEl.style.width  = `${((total - remaining) / total) * 100}%`;
+            if (remaining <= 0) {
+                clearInterval(_countdownInterval);
+                _countdownInterval = null;
+                hideAnalysisError();
+                retryFn();
+            }
+            remaining--;
+        };
+        tick();
+        _countdownInterval = setInterval(tick, 1000);
+    } else {
+        countdownEl.classList.add('hidden');
+        retryBtn.disabled = false;
+    }
+
+    // Wire buttons (replace to avoid duplicate listeners)
+    const manualBtn   = document.getElementById('error-manual-btn');
+    const newRetryBtn = retryBtn.cloneNode(true);
+    const newManualBtn = manualBtn.cloneNode(true);
+    retryBtn.parentNode.replaceChild(newRetryBtn, retryBtn);
+    manualBtn.parentNode.replaceChild(newManualBtn, manualBtn);
+
+    newRetryBtn.disabled = retryBtn.disabled;
+    newRetryBtn.addEventListener('click', () => {
+        if (_countdownInterval) { clearInterval(_countdownInterval); _countdownInterval = null; }
+        hideAnalysisError();
+        retryFn();
+    });
+    newManualBtn.addEventListener('click', () => {
+        if (_countdownInterval) { clearInterval(_countdownInterval); _countdownInterval = null; }
+        hideAnalysisError();
+        document.getElementById('input-section').classList.remove('hidden');
+        document.querySelector('[data-tab="manual"]').click();
+    });
+
+    document.getElementById('input-section').classList.add('hidden');
+    document.getElementById('error-section').classList.remove('hidden');
+}
+
+function hideAnalysisError() {
+    document.getElementById('error-section').classList.add('hidden');
+    document.getElementById('input-section').classList.remove('hidden');
+}
+
+// ─────────────────────────────────────────────────────────────────────
 
 function parseDate(dateStr) {
     if (!dateStr) return null;

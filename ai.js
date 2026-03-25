@@ -80,7 +80,16 @@ IMPORTANT RULES:
         const errText = await response.text().catch(() => '');
         const logPayload = JSON.stringify({ timestamp: new Date().toISOString(), status: response.status, body: errText }, null, 2);
         _downloadLog(logPayload);
-        throw new Error(`Analysis service returned status ${response.status}. A debug log has been downloaded.`);
+
+        // Classify the failure so the UI can show the right message + retry delay
+        let errType = 'server';
+        if (response.status === 400 && errText.includes('credit')) errType = 'credits';
+        else if (response.status === 429) errType = 'ratelimit';
+        else if (response.status >= 500)  errType = 'server';
+
+        const err = new Error(`Analysis service returned status ${response.status}.`);
+        err.errType = errType;
+        throw err;
     }
 
     const data = await response.json();

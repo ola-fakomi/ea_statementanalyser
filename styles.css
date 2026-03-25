@@ -1441,6 +1441,121 @@ select option {
 }
 
 /* =============================================
+   ERROR / RETRY SECTION
+   ============================================= */
+
+.error-section {
+    animation: slideUp 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.error-card {
+    background: var(--surface);
+    border-radius: var(--r-xl);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--warn);
+    padding: 40px 36px 36px;
+    max-width: 560px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.error-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--warn);
+    margin: 0 auto 20px;
+}
+
+.error-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+
+.error-message {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Countdown */
+.error-countdown {
+    margin-bottom: 28px;
+}
+
+.countdown-display {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.countdown-time {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: var(--amber);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    min-width: 4ch;
+    text-align: center;
+}
+
+.countdown-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.countdown-track {
+    height: 3px;
+    background: var(--surface-high);
+    border-radius: 2px;
+    overflow: hidden;
+    max-width: 240px;
+    margin: 0 auto;
+}
+
+.countdown-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--amber-dim), var(--amber-light));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 1s linear;
+}
+
+/* Error action buttons */
+.error-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.error-footer {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+/* =============================================
    UTILITIES
    ============================================= */
 
